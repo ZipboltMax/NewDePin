@@ -1,0 +1,185 @@
+{
+  "design_system": {
+    "identity": {
+      "name": "EcoDePIN",
+      "archetype": "Solarpunk Fintech",
+      "core_values": ["Sustainable", "Transparent", "High-Yield", "Futuristic"],
+      "vibe": "Where nature meets the blockchain. Organic growth powered by decentralized infrastructure."
+    },
+    "typography": {
+      "font_family": {
+        "heading": "Outfit, sans-serif",
+        "body": "DM Sans, sans-serif",
+        "mono": "JetBrains Mono, monospace"
+      },
+      "scale": {
+        "h1": "text-5xl md:text-7xl font-bold tracking-tight leading-[1.1]",
+        "h2": "text-4xl md:text-5xl font-semibold tracking-tight",
+        "h3": "text-2xl md:text-3xl font-medium",
+        "body_lg": "text-lg md:text-xl leading-relaxed text-muted-foreground",
+        "body_base": "text-base leading-relaxed",
+        "caption": "text-sm font-medium tracking-wide uppercase text-muted-foreground"
+      }
+    },
+    "colors": {
+      "light_mode": {
+        "background": "#fafaf9",
+        "foreground": "#0c0a09",
+        "primary": "#059669",
+        "primary_foreground": "#ffffff",
+        "secondary": "#e7e5e4",
+        "secondary_foreground": "#1c1917",
+        "accent": "#84cc16",
+        "accent_foreground": "#0f172a",
+        "muted": "#f5f5f4",
+        "muted_foreground": "#57534e",
+        "card": "#ffffff",
+        "card_foreground": "#0c0a09",
+        "border": "#e7e5e4"
+      },
+      "dark_mode": {
+        "background": "#020617",
+        "foreground": "#f8fafc",
+        "primary": "#10b981",
+        "primary_foreground": "#020617",
+        "secondary": "#1e293b",
+        "secondary_foreground": "#f8fafc",
+        "accent": "#a3e635",
+        "accent_foreground": "#0f172a",
+        "muted": "#0f172a",
+        "muted_foreground": "#94a3b8",
+        "card": "#0f172a",
+        "card_foreground": "#f8fafc",
+        "border": "#1e293b"
+      },
+      "chart_palette": [
+        "#10b981",
+        "#84cc16",
+        "#06b6d4",
+        "#f59e0b",
+        "#6366f1"
+      ]
+    },
+    "visual_enhancers": {
+      "radius": "rounded-xl",
+      "shadows": {
+        "soft": "shadow-[0_8px_30px_rgb(0,0,0,0.04)]",
+        "glow": "shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+      },
+      "glassmorphism": {
+        "light": "bg-white/70 backdrop-blur-xl border border-white/20 shadow-sm",
+        "dark": "bg-slate-950/60 backdrop-blur-xl border border-white/10 shadow-lg"
+      },
+      "gradients": {
+        "hero": "bg-gradient-to-br from-emerald-50 via-white to-lime-50 dark:from-slate-950 dark:via-slate-900 dark:to-emerald-950",
+        "text_gradient": "bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-lime-600 dark:from-emerald-400 dark:to-lime-400"
+      }
+    }
+  },
+  "layout_strategies": {
+    "marketing": {
+      "grid_type": "Bento / Tetris",
+      "container": "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+      "spacing": "gap-8 md:gap-12",
+      "section_padding": "py-20 md:py-32"
+    },
+    "dashboard": {
+      "grid_type": "Control Room",
+      "container": "w-full px-4 md:px-6 py-6",
+      "spacing": "gap-4 md:gap-6",
+      "sidebar_width": "w-64"
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "rounded-full px-8 py-6 text-lg font-medium shadow-lg hover:shadow-xl transition-all hover:-translate-y-1",
+      "secondary": "rounded-full px-6 py-6 text-base font-medium border-2 border-primary/20 hover:bg-primary/5 transition-colors",
+      "ghost": "rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground"
+    },
+    "cards": {
+      "feature": "p-8 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-colors group",
+      "stat": "p-6 rounded-xl bg-card/50 border border-border/50 backdrop-blur-sm"
+    },
+    "inputs": {
+      "default": "h-12 rounded-lg border-input bg-background/50 focus:ring-2 focus:ring-primary/20 transition-all"
+    }
+  },
+  "image_assets": {
+    "hero_backgrounds": [
+      {
+        "url": "https://images.unsplash.com/photo-1654419189892-d8814766c4fd?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "Solar panels on hill",
+        "category": "hero"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1618963534110-eb91285205ff?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "Aerial green city",
+        "category": "hero"
+      }
+    ],
+    "segments": {
+      "data_centers": {
+        "url": "https://images.unsplash.com/photo-1733187633171-3b1c0c6ce708?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "Modern server room"
+      },
+      "battery_storage": {
+        "url": "https://images.unsplash.com/photo-1715605569694-4cc47c9fb535?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "Industrial battery storage"
+      },
+      "ev_charging": {
+        "url": "https://images.unsplash.com/photo-1765272088009-100c96a4cd4e?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "EV charging station"
+      },
+      "renewable_energy": {
+        "url": "https://images.unsplash.com/photo-1755585129999-7b29cf3baebe?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "Wind turbines"
+      },
+      "green_credits": {
+        "url": "https://images.unsplash.com/photo-1683444595829-e74e68fcce22?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "Abstract nature leaf texture"
+      }
+    },
+    "team": [
+      "https://images.unsplash.com/photo-1650784854945-264d5b0b6b07?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "https://images.unsplash.com/photo-1650784855038-9f4d5ed154a9?crop=entropy&cs=srgb&fm=jpg&q=85"
+    ]
+  },
+  "page_instructions": {
+    "landing_page": {
+      "sections": [
+        "Hero: Split screen or centered with 'Solarpunk' city background. Headline: 'Invest in the Infrastructure of Tomorrow'. CTA: 'Start Investing' + 'View Segments'.",
+        "Features Grid: Bento grid layout highlighting 'Daily Payouts', 'Real Asset Backing', 'Carbon Negative'. Use large icons/numbers.",
+        "Segments Carousel: Interactive cards for Data Centers, Batteries, etc. Hover effects reveal APY.",
+        "How it Works: 3-step process (Connect Wallet -> Choose Plan -> Earn).",
+        "Trust/Partners: Marquee of eco-partners and blockchain logos."
+      ]
+    },
+    "dashboard": {
+      "layout": "Sidebar navigation (left) + Top bar (Wallet Connect, User Profile). Main content area with 'Control Room' grid.",
+      "widgets": [
+        "Portfolio Value (Big number, green trend line)",
+        "Active Investments (List of assets owned)",
+        "Pending Rewards (Claimable tokens)",
+        "Impact Metrics (CO2 offset, kWh generated - CRITICAL for this brand)",
+        "Asset Performance Chart (Area chart)"
+      ]
+    },
+    "investment_detail": {
+      "layout": "Two-column. Left: Asset imagery + Key Stats (APY, Lock Period). Right: Investment Calculator + 'Invest Now' card.",
+      "features": [
+        "Calculator: Slider for investment amount -> shows projected daily/monthly/yearly returns.",
+        "Risk Meter: Visual gauge showing risk level (Low/Medium/High).",
+        "Tabs: 'Overview', 'Financials', 'Sustainability Report'."
+      ]
+    }
+  },
+  "universal_guidelines": [
+    "DO NOT use generic gradients. Use noise/grain textures overlays for depth.",
+    "Ensure all interactive elements have hover states (scale up, brightness up).",
+    "Use 'sonner' for all toast notifications.",
+    "Use 'lucide-react' for icons.",
+    "For charts, use 'recharts' via shadcn/ui chart component.",
+    "Dark mode is preferred for the Dashboard, Light mode for Landing Page (or support both with toggle).",
+    "Add 'data-testid' to all interactive elements."
+  ]
+}
