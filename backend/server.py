@@ -407,7 +407,7 @@ async def create_investment(request: Request, user: dict = Depends(require_auth)
     }
     
     await db.investments.insert_one(investment)
-    del investment["_id"] if "_id" in investment else None
+    investment.pop("_id", None)
     return investment
 
 @api_router.get("/portfolio/stats")
