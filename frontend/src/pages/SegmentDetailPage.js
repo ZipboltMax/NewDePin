@@ -167,7 +167,7 @@ const SegmentDetailPage = () => {
     <div className="min-h-screen pt-20 pb-16">
       {/* Hero */}
       <section className="relative">
-        <div className="absolute inset-0 h-[400px]">
+        <div className="absolute inset-0 h-[400px] pointer-events-none">
           <img
             src={segment.image_url}
             alt={segment.name}
