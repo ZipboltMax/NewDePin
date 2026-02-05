@@ -144,7 +144,7 @@ const LandingPage = () => {
             <p className="text-lg md:text-xl leading-relaxed text-muted-foreground mb-10 max-w-2xl">
               Earn sustainable yields by investing in real-world assets like data centers, 
               battery storage, EV charging, and renewable energy through decentralized 
-              physical infrastructure on Solana.
+              physical infrastructure on Ethereum and EVM-compatible chains.
             </p>
 
             {/* CTAs */}
