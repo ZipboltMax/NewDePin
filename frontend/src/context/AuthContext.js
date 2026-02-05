@@ -61,18 +61,24 @@ export const AuthProvider = ({ children }) => {
     navigate('/');
   };
 
-  const connectWallet = async (walletAddress) => {
+  const connectWallet = async (walletAddress, walletType = 'metamask', chainId = 1) => {
     try {
-      const response = await fetch(`${API_URL}/api/auth/connect-wallet`, {
+      const response = await fetch(`${API_URL}/api/wallet/connect`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ wallet_address: walletAddress }),
+        body: JSON.stringify({ 
+          wallet_address: walletAddress,
+          wallet_type: walletType,
+          chain_id: chainId,
+        }),
       });
       if (response.ok) {
-        const updatedUser = await response.json();
-        setUser(updatedUser);
-        return true;
+        const data = await response.json();
+        if (data.success) {
+          setUser(data.data);
+          return true;
+        }
       }
       return false;
     } catch (error) {
