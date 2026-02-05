@@ -18,12 +18,18 @@ const WALLET_TYPES = {
   COINBASE: 'coinbase',
 };
 
-// Supported Chains
-const CHAINS = {
-  1: { name: 'Ethereum', symbol: 'ETH', rpcUrl: 'https://mainnet.infura.io/v3/' },
-  137: { name: 'Polygon', symbol: 'MATIC', rpcUrl: 'https://polygon-rpc.com' },
-  56: { name: 'BNB Chain', symbol: 'BNB', rpcUrl: 'https://bsc-dataseed.binance.org' },
-  42161: { name: 'Arbitrum', symbol: 'ETH', rpcUrl: 'https://arb1.arbitrum.io/rpc' },
+// Polygon Network Configuration
+const POLYGON_CHAIN_ID = 137;
+const POLYGON_CONFIG = {
+  chainId: `0x${POLYGON_CHAIN_ID.toString(16)}`, // 0x89
+  chainName: 'Polygon Mainnet',
+  nativeCurrency: {
+    name: 'MATIC',
+    symbol: 'MATIC',
+    decimals: 18,
+  },
+  rpcUrls: ['https://polygon-rpc.com', 'https://rpc-mainnet.maticvigil.com'],
+  blockExplorerUrls: ['https://polygonscan.com'],
 };
 
 // Wallet configurations
@@ -61,6 +67,7 @@ export const WalletProvider = ({ children }) => {
   const [chainId, setChainId] = useState(null);
   const [connecting, setConnecting] = useState(false);
   const [error, setError] = useState(null);
+  const [switchingChain, setSwitchingChain] = useState(false);
 
   // Check for existing connection on mount
   useEffect(() => {
@@ -80,7 +87,6 @@ export const WalletProvider = ({ children }) => {
 
   const handleAccountsChanged = (accounts) => {
     if (accounts.length === 0) {
-      // User disconnected
       disconnect();
     } else {
       setAddress(accounts[0]);
@@ -88,7 +94,13 @@ export const WalletProvider = ({ children }) => {
   };
 
   const handleChainChanged = (newChainId) => {
-    setChainId(parseInt(newChainId, 16));
+    const parsedChainId = parseInt(newChainId, 16);
+    setChainId(parsedChainId);
+    
+    // If user switches away from Polygon, prompt to switch back
+    if (parsedChainId !== POLYGON_CHAIN_ID && connected) {
+      switchToPolygon();
+    }
   };
 
   const checkConnection = async () => {
@@ -101,13 +113,62 @@ export const WalletProvider = ({ children }) => {
           setWalletType(WALLET_TYPES.METAMASK);
           
           const chainIdHex = await window.ethereum.request({ method: 'eth_chainId' });
-          setChainId(parseInt(chainIdHex, 16));
+          const currentChainId = parseInt(chainIdHex, 16);
+          setChainId(currentChainId);
+          
+          // Auto-switch to Polygon if not already on it
+          if (currentChainId !== POLYGON_CHAIN_ID) {
+            await switchToPolygon();
+          }
         }
       } catch (err) {
         console.error('Check connection error:', err);
       }
     }
   };
+
+  // Switch to Polygon network
+  const switchToPolygon = useCallback(async () => {
+    if (!window.ethereum) return { success: false, error: 'No provider' };
+    
+    setSwitchingChain(true);
+    
+    try {
+      // Try to switch to Polygon
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: POLYGON_CONFIG.chainId }],
+      });
+      
+      setChainId(POLYGON_CHAIN_ID);
+      setSwitchingChain(false);
+      return { success: true };
+      
+    } catch (switchError) {
+      // Chain not added to wallet - add it
+      if (switchError.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [POLYGON_CONFIG],
+          });
+          
+          setChainId(POLYGON_CHAIN_ID);
+          setSwitchingChain(false);
+          return { success: true };
+          
+        } catch (addError) {
+          console.error('Failed to add Polygon network:', addError);
+          setSwitchingChain(false);
+          return { success: false, error: 'Failed to add Polygon network' };
+        }
+      }
+      
+      console.error('Failed to switch to Polygon:', switchError);
+      setSwitchingChain(false);
+      return { success: false, error: switchError.message };
+    }
+  }, []);
 
   const getProvider = useCallback((type) => {
     if (typeof window === 'undefined') return null;
@@ -145,7 +206,7 @@ export const WalletProvider = ({ children }) => {
         throw new Error('No accounts found');
       }
       
-      // Get chain ID
+      // Get current chain ID
       const chainIdHex = await provider.request({ method: 'eth_chainId' });
       const currentChainId = parseInt(chainIdHex, 16);
       
@@ -153,9 +214,24 @@ export const WalletProvider = ({ children }) => {
       setWalletType(type);
       setChainId(currentChainId);
       setConnected(true);
-      setConnecting(false);
       
-      return { success: true, address: accounts[0], chainId: currentChainId };
+      // Auto-switch to Polygon if not already on it
+      if (currentChainId !== POLYGON_CHAIN_ID) {
+        const switchResult = await switchToPolygon();
+        if (!switchResult.success) {
+          // Still connected but on wrong network
+          setConnecting(false);
+          return { 
+            success: true, 
+            address: accounts[0], 
+            chainId: currentChainId,
+            warning: 'Please switch to Polygon network'
+          };
+        }
+      }
+      
+      setConnecting(false);
+      return { success: true, address: accounts[0], chainId: POLYGON_CHAIN_ID };
       
     } catch (err) {
       console.error('Wallet connection error:', err);
@@ -163,7 +239,7 @@ export const WalletProvider = ({ children }) => {
       setConnecting(false);
       return { success: false, error: err.message };
     }
-  }, [getProvider]);
+  }, [getProvider, switchToPolygon]);
 
   const disconnect = useCallback(async () => {
     setConnected(false);
@@ -173,30 +249,7 @@ export const WalletProvider = ({ children }) => {
     setError(null);
   }, []);
 
-  const switchChain = useCallback(async (targetChainId) => {
-    if (!window.ethereum) return { success: false, error: 'No provider' };
-    
-    try {
-      await window.ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: `0x${targetChainId.toString(16)}` }],
-      });
-      
-      setChainId(targetChainId);
-      return { success: true };
-      
-    } catch (err) {
-      // Chain not added to wallet
-      if (err.code === 4902) {
-        return { success: false, error: 'Chain not added to wallet' };
-      }
-      return { success: false, error: err.message };
-    }
-  }, []);
-
-  const getChainName = useCallback((id) => {
-    return CHAINS[id]?.name || `Chain ${id}`;
-  }, []);
+  const isOnPolygon = useMemo(() => chainId === POLYGON_CHAIN_ID, [chainId]);
 
   const value = useMemo(() => ({
     connected,
@@ -206,15 +259,17 @@ export const WalletProvider = ({ children }) => {
     walletName: walletType,
     chainId,
     connecting,
+    switchingChain,
     error,
     connect,
     disconnect,
-    switchChain,
-    getChainName,
+    switchToPolygon,
+    isOnPolygon,
     wallets: WALLETS,
-    chains: CHAINS,
     WALLET_TYPES,
-  }), [connected, address, walletType, chainId, connecting, error, connect, disconnect, switchChain, getChainName]);
+    POLYGON_CHAIN_ID,
+    networkName: 'Polygon',
+  }), [connected, address, walletType, chainId, connecting, switchingChain, error, connect, disconnect, switchToPolygon, isOnPolygon]);
 
   return (
     <WalletContext.Provider value={value}>
