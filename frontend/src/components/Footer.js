@@ -124,8 +124,8 @@ const Footer = () => {
           </p>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <span>Powered by</span>
-            <span className="font-semibold text-foreground">Ethereum</span>
-            <div className="w-4 h-4 rounded-full bg-gradient-to-r from-[#627EEA] to-[#8A92B2]" />
+            <span className="font-semibold text-foreground">Polygon</span>
+            <div className="w-4 h-4 rounded-full bg-gradient-to-r from-[#8247E5] to-[#A379FF]" />
           </div>
         </div>
       </div>
