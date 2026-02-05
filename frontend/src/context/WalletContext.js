@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react';
 
 const WalletContext = createContext(null);
 
@@ -10,91 +10,211 @@ export const useWallet = () => {
   return context;
 };
 
-// Supported wallets configuration
+// EVM Wallet Types
+const WALLET_TYPES = {
+  METAMASK: 'metamask',
+  TRUST_WALLET: 'trust_wallet',
+  WALLETCONNECT: 'walletconnect',
+  COINBASE: 'coinbase',
+};
+
+// Supported Chains
+const CHAINS = {
+  1: { name: 'Ethereum', symbol: 'ETH', rpcUrl: 'https://mainnet.infura.io/v3/' },
+  137: { name: 'Polygon', symbol: 'MATIC', rpcUrl: 'https://polygon-rpc.com' },
+  56: { name: 'BNB Chain', symbol: 'BNB', rpcUrl: 'https://bsc-dataseed.binance.org' },
+  42161: { name: 'Arbitrum', symbol: 'ETH', rpcUrl: 'https://arb1.arbitrum.io/rpc' },
+};
+
+// Wallet configurations
 const WALLETS = [
   {
-    name: 'Phantom',
-    icon: 'https://phantom.app/img/phantom-logo.svg',
-    adapter: 'phantom',
-    url: 'https://phantom.app/',
+    type: WALLET_TYPES.METAMASK,
+    name: 'MetaMask',
+    icon: 'https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg',
+    downloadUrl: 'https://metamask.io/download/',
   },
   {
-    name: 'Solflare',
-    icon: 'https://solflare.com/favicon.ico',
-    adapter: 'solflare',
-    url: 'https://solflare.com/',
+    type: WALLET_TYPES.TRUST_WALLET,
+    name: 'Trust Wallet',
+    icon: 'https://trustwallet.com/assets/images/media/assets/TWT.svg',
+    downloadUrl: 'https://trustwallet.com/download',
+  },
+  {
+    type: WALLET_TYPES.WALLETCONNECT,
+    name: 'WalletConnect',
+    icon: 'https://walletconnect.com/walletconnect-logo.png',
+    downloadUrl: 'https://walletconnect.com/',
+  },
+  {
+    type: WALLET_TYPES.COINBASE,
+    name: 'Coinbase Wallet',
+    icon: 'https://www.coinbase.com/img/favicon/favicon-256.png',
+    downloadUrl: 'https://www.coinbase.com/wallet/downloads',
   },
 ];
 
 export const WalletProvider = ({ children }) => {
   const [connected, setConnected] = useState(false);
-  const [publicKey, setPublicKey] = useState(null);
-  const [walletName, setWalletName] = useState(null);
+  const [address, setAddress] = useState(null);
+  const [walletType, setWalletType] = useState(null);
+  const [chainId, setChainId] = useState(null);
   const [connecting, setConnecting] = useState(false);
+  const [error, setError] = useState(null);
 
-  const getProvider = useCallback((walletType) => {
-    if (typeof window === 'undefined') return null;
+  // Check for existing connection on mount
+  useEffect(() => {
+    checkConnection();
     
-    if (walletType === 'phantom') {
-      return window.solana?.isPhantom ? window.solana : null;
+    // Listen for account changes
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', handleAccountsChanged);
+      window.ethereum.on('chainChanged', handleChainChanged);
+      
+      return () => {
+        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+        window.ethereum.removeListener('chainChanged', handleChainChanged);
+      };
     }
-    if (walletType === 'solflare') {
-      return window.solflare?.isSolflare ? window.solflare : null;
-    }
-    return null;
   }, []);
 
-  const connect = useCallback(async (walletType) => {
+  const handleAccountsChanged = (accounts) => {
+    if (accounts.length === 0) {
+      // User disconnected
+      disconnect();
+    } else {
+      setAddress(accounts[0]);
+    }
+  };
+
+  const handleChainChanged = (newChainId) => {
+    setChainId(parseInt(newChainId, 16));
+  };
+
+  const checkConnection = async () => {
+    if (window.ethereum) {
+      try {
+        const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+        if (accounts.length > 0) {
+          setAddress(accounts[0]);
+          setConnected(true);
+          setWalletType(WALLET_TYPES.METAMASK);
+          
+          const chainIdHex = await window.ethereum.request({ method: 'eth_chainId' });
+          setChainId(parseInt(chainIdHex, 16));
+        }
+      } catch (err) {
+        console.error('Check connection error:', err);
+      }
+    }
+  };
+
+  const getProvider = useCallback((type) => {
+    if (typeof window === 'undefined') return null;
+    
+    switch (type) {
+      case WALLET_TYPES.METAMASK:
+        return window.ethereum?.isMetaMask ? window.ethereum : null;
+      case WALLET_TYPES.TRUST_WALLET:
+        return window.ethereum?.isTrust ? window.ethereum : null;
+      case WALLET_TYPES.COINBASE:
+        return window.ethereum?.isCoinbaseWallet ? window.ethereum : null;
+      default:
+        return window.ethereum || null;
+    }
+  }, []);
+
+  const connect = useCallback(async (type = WALLET_TYPES.METAMASK) => {
     setConnecting(true);
+    setError(null);
+    
     try {
-      const provider = getProvider(walletType);
+      const provider = getProvider(type);
       
       if (!provider) {
-        const wallet = WALLETS.find(w => w.adapter === walletType);
-        window.open(wallet?.url || 'https://phantom.app/', '_blank');
+        const wallet = WALLETS.find(w => w.type === type);
+        window.open(wallet?.downloadUrl || 'https://metamask.io/download/', '_blank');
         setConnecting(false);
         return { success: false, error: 'Wallet not installed' };
       }
 
-      const response = await provider.connect();
-      const pubKey = response.publicKey.toString();
+      // Request account access
+      const accounts = await provider.request({ method: 'eth_requestAccounts' });
       
-      setPublicKey(pubKey);
-      setWalletName(walletType);
+      if (accounts.length === 0) {
+        throw new Error('No accounts found');
+      }
+      
+      // Get chain ID
+      const chainIdHex = await provider.request({ method: 'eth_chainId' });
+      const currentChainId = parseInt(chainIdHex, 16);
+      
+      setAddress(accounts[0]);
+      setWalletType(type);
+      setChainId(currentChainId);
       setConnected(true);
       setConnecting(false);
       
-      return { success: true, publicKey: pubKey };
-    } catch (error) {
-      console.error('Wallet connection error:', error);
+      return { success: true, address: accounts[0], chainId: currentChainId };
+      
+    } catch (err) {
+      console.error('Wallet connection error:', err);
+      setError(err.message);
       setConnecting(false);
-      return { success: false, error: error.message };
+      return { success: false, error: err.message };
     }
   }, [getProvider]);
 
   const disconnect = useCallback(async () => {
-    try {
-      const provider = getProvider(walletName);
-      if (provider?.disconnect) {
-        await provider.disconnect();
-      }
-    } catch (error) {
-      console.error('Disconnect error:', error);
-    }
     setConnected(false);
-    setPublicKey(null);
-    setWalletName(null);
-  }, [walletName, getProvider]);
+    setAddress(null);
+    setWalletType(null);
+    setChainId(null);
+    setError(null);
+  }, []);
+
+  const switchChain = useCallback(async (targetChainId) => {
+    if (!window.ethereum) return { success: false, error: 'No provider' };
+    
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: `0x${targetChainId.toString(16)}` }],
+      });
+      
+      setChainId(targetChainId);
+      return { success: true };
+      
+    } catch (err) {
+      // Chain not added to wallet
+      if (err.code === 4902) {
+        return { success: false, error: 'Chain not added to wallet' };
+      }
+      return { success: false, error: err.message };
+    }
+  }, []);
+
+  const getChainName = useCallback((id) => {
+    return CHAINS[id]?.name || `Chain ${id}`;
+  }, []);
 
   const value = useMemo(() => ({
     connected,
-    publicKey,
-    walletName,
+    address,
+    publicKey: address, // Alias for compatibility
+    walletType,
+    walletName: walletType,
+    chainId,
     connecting,
+    error,
     connect,
     disconnect,
+    switchChain,
+    getChainName,
     wallets: WALLETS,
-  }), [connected, publicKey, walletName, connecting, connect, disconnect]);
+    chains: CHAINS,
+    WALLET_TYPES,
+  }), [connected, address, walletType, chainId, connecting, error, connect, disconnect, switchChain, getChainName]);
 
   return (
     <WalletContext.Provider value={value}>
