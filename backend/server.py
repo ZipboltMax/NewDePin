@@ -38,6 +38,8 @@ class User(BaseModel):
     name: str
     picture: Optional[str] = None
     wallet_address: Optional[str] = None
+    wallet_type: Optional[str] = None
+    chain_id: Optional[int] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class UserSession(BaseModel):
