@@ -67,8 +67,7 @@ const userSchema = new mongoose.Schema({
 });
 
 // Index for faster queries
-userSchema.index({ email: 1 });
-userSchema.index({ wallet_address: 1 });
+userSchema.index({ user_id: 1 });
 
 const User = mongoose.model('User', userSchema);
 
