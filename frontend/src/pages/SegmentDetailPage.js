@@ -37,16 +37,19 @@ const SegmentDetailPage = () => {
         ]);
 
         if (segmentRes.ok) {
-          const segmentData = await segmentRes.json();
+          const segmentResult = await segmentRes.json();
+          const segmentData = segmentResult.data || segmentResult;
           setSegment(segmentData);
         }
 
         if (plansRes.ok) {
-          const plansData = await plansRes.json();
-          setPlans(plansData);
-          if (plansData.length > 0) {
-            setSelectedPlan(plansData[0]);
-            setInvestmentAmount(plansData[0].min_investment);
+          const plansResult = await plansRes.json();
+          const plansData = plansResult.data || plansResult;
+          const plans = Array.isArray(plansData) ? plansData : [];
+          setPlans(plans);
+          if (plans.length > 0) {
+            setSelectedPlan(plans[0]);
+            setInvestmentAmount(plans[0].min_investment);
           }
         }
       } catch (error) {
