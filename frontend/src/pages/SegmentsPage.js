@@ -17,8 +17,9 @@ const SegmentsPage = () => {
       try {
         const response = await fetch(`${API_URL}/api/segments`);
         if (response.ok) {
-          const data = await response.json();
-          setSegments(data);
+          const result = await response.json();
+          const data = result.data || result;
+          setSegments(Array.isArray(data) ? data : []);
         }
       } catch (error) {
         console.error('Failed to fetch segments:', error);
