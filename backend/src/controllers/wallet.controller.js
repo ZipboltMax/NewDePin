@@ -8,6 +8,9 @@ const { WALLET_TYPES, WALLET_INFO, CHAIN_NAMES } = require('../constants/walletT
 const env = require('../config/env');
 const logger = require('../utils/logger');
 
+// Polygon only configuration
+const POLYGON_CHAIN_ID = 137;
+
 /**
  * GET /api/wallet/supported
  * Get list of supported wallets based on ENV config
@@ -41,11 +44,10 @@ const getSupportedWallets = async (req, res) => {
       });
     }
     
-    // Add supported chains
-    const supportedChains = env.wallets.SUPPORTED_CHAIN_IDS.map((chainId) => ({
-      chainId,
-      name: CHAIN_NAMES[chainId] || `Chain ${chainId}`,
-    }));
+    // Only Polygon supported
+    const supportedChains = [
+      { chainId: POLYGON_CHAIN_ID, name: 'Polygon Mainnet' }
+    ];
     
     return sendSuccess(res, {
       wallets: supportedWallets,
