@@ -62,11 +62,11 @@ const getSupportedWallets = async (req, res) => {
 
 /**
  * POST /api/wallet/connect
- * Connect wallet to user profile
+ * Connect wallet to user profile (Polygon only)
  */
 const connectWallet = async (req, res) => {
   try {
-    const { wallet_address, wallet_type, chain_id } = req.body;
+    const { wallet_address, wallet_type } = req.body;
     const userId = req.user.user_id;
     
     if (!wallet_address) {
@@ -83,11 +83,6 @@ const connectWallet = async (req, res) => {
       return sendError(res, 'Invalid wallet type', 400);
     }
     
-    // Validate chain ID if provided
-    if (chain_id && !env.wallets.SUPPORTED_CHAIN_IDS.includes(Number(chain_id))) {
-      return sendError(res, 'Unsupported chain ID', 400);
-    }
-    
     // Check if wallet is already connected to another user
     const existingUser = await User.findOne({
       wallet_address: wallet_address.toLowerCase(),
@@ -98,18 +93,18 @@ const connectWallet = async (req, res) => {
       return sendError(res, 'Wallet already connected to another account', 409);
     }
     
-    // Update user with wallet info
+    // Update user with wallet info - force Polygon chain
     const updatedUser = await User.findOneAndUpdate(
       { user_id: userId },
       {
         wallet_address: wallet_address.toLowerCase(),
         wallet_type: wallet_type || WALLET_TYPES.METAMASK,
-        chain_id: chain_id || 1,
+        chain_id: POLYGON_CHAIN_ID, // Always Polygon
       },
       { new: true }
     );
     
-    logger.info(`Wallet connected: ${wallet_address} for user ${userId}`);
+    logger.info(`Wallet connected: ${wallet_address} for user ${userId} on Polygon`);
     
     return sendSuccess(res, updatedUser.toJSON(), 'Wallet connected successfully');
     
