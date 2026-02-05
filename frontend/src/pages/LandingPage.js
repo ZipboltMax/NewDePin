@@ -373,10 +373,10 @@ const LandingPage = () => {
               variant="outline"
               size="lg"
               className="rounded-full px-8 py-6 text-lg font-medium border-2"
-              onClick={() => window.open('https://ethereum.org', '_blank')}
+              onClick={() => window.open('https://polygon.technology', '_blank')}
               data-testid="cta-learn-more"
             >
-              Learn About Ethereum
+              Learn About Polygon
             </Button>
           </div>
         </div>
