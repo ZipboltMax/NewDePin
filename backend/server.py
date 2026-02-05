@@ -316,17 +316,81 @@ async def connect_wallet(request: Request, user: dict = Depends(require_auth)):
     """Connect wallet address to user profile"""
     body = await request.json()
     wallet_address = body.get("wallet_address")
+    wallet_type = body.get("wallet_type", "metamask")
+    chain_id = body.get("chain_id", 1)
     
     if not wallet_address:
         raise HTTPException(status_code=400, detail="wallet_address required")
     
     await db.users.update_one(
         {"user_id": user["user_id"]},
-        {"$set": {"wallet_address": wallet_address}}
+        {"$set": {
+            "wallet_address": wallet_address.lower(),
+            "wallet_type": wallet_type,
+            "chain_id": chain_id
+        }}
     )
     
     updated_user = await db.users.find_one({"user_id": user["user_id"]}, {"_id": 0})
     return updated_user
+
+# ============= WALLET ROUTES =============
+
+SUPPORTED_WALLETS = [
+    {"type": "metamask", "name": "MetaMask", "icon": "https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg", "enabled": True},
+    {"type": "trust_wallet", "name": "Trust Wallet", "icon": "https://trustwallet.com/assets/images/media/assets/TWT.svg", "enabled": True},
+    {"type": "walletconnect", "name": "WalletConnect", "icon": "https://walletconnect.com/walletconnect-logo.png", "enabled": True},
+    {"type": "coinbase", "name": "Coinbase Wallet", "icon": "https://www.coinbase.com/img/favicon/favicon-256.png", "enabled": True},
+]
+
+SUPPORTED_CHAINS = [
+    {"chainId": 1, "name": "Ethereum Mainnet"},
+    {"chainId": 137, "name": "Polygon"},
+    {"chainId": 56, "name": "BNB Smart Chain"},
+    {"chainId": 42161, "name": "Arbitrum One"},
+]
+
+@api_router.get("/wallet/supported")
+async def get_supported_wallets():
+    """Get list of supported EVM wallets"""
+    return {"success": True, "data": {"wallets": SUPPORTED_WALLETS, "chains": SUPPORTED_CHAINS}}
+
+@api_router.post("/wallet/connect")
+async def connect_wallet_new(request: Request, user: dict = Depends(require_auth)):
+    """Connect EVM wallet to user profile"""
+    body = await request.json()
+    wallet_address = body.get("wallet_address")
+    wallet_type = body.get("wallet_type", "metamask")
+    chain_id = body.get("chain_id", 1)
+    
+    if not wallet_address:
+        raise HTTPException(status_code=400, detail="wallet_address required")
+    
+    # Validate EVM address format
+    if not wallet_address.startswith("0x") or len(wallet_address) != 42:
+        raise HTTPException(status_code=400, detail="Invalid EVM wallet address format")
+    
+    await db.users.update_one(
+        {"user_id": user["user_id"]},
+        {"$set": {
+            "wallet_address": wallet_address.lower(),
+            "wallet_type": wallet_type,
+            "chain_id": chain_id
+        }}
+    )
+    
+    updated_user = await db.users.find_one({"user_id": user["user_id"]}, {"_id": 0})
+    return {"success": True, "data": updated_user}
+
+@api_router.post("/wallet/disconnect")
+async def disconnect_wallet(request: Request, user: dict = Depends(require_auth)):
+    """Disconnect wallet from user profile"""
+    await db.users.update_one(
+        {"user_id": user["user_id"]},
+        {"$set": {"wallet_address": None, "wallet_type": None, "chain_id": None}}
+    )
+    updated_user = await db.users.find_one({"user_id": user["user_id"]}, {"_id": 0})
+    return {"success": True, "data": updated_user}
 
 # ============= SEGMENTS & PLANS ROUTES =============
 
