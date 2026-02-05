@@ -356,11 +356,11 @@ async def get_supported_wallets():
 
 @api_router.post("/wallet/connect")
 async def connect_wallet_new(request: Request, user: dict = Depends(require_auth)):
-    """Connect EVM wallet to user profile"""
+    """Connect EVM wallet to user profile (Polygon only)"""
     body = await request.json()
     wallet_address = body.get("wallet_address")
     wallet_type = body.get("wallet_type", "metamask")
-    chain_id = body.get("chain_id", 1)
+    chain_id = body.get("chain_id", POLYGON_CHAIN_ID)
     
     if not wallet_address:
         raise HTTPException(status_code=400, detail="wallet_address required")
@@ -368,6 +368,9 @@ async def connect_wallet_new(request: Request, user: dict = Depends(require_auth
     # Validate EVM address format
     if not wallet_address.startswith("0x") or len(wallet_address) != 42:
         raise HTTPException(status_code=400, detail="Invalid EVM wallet address format")
+    
+    # Force Polygon chain
+    chain_id = POLYGON_CHAIN_ID
     
     await db.users.update_one(
         {"user_id": user["user_id"]},
