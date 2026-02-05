@@ -32,13 +32,15 @@ const Dashboard = () => {
         ]);
 
         if (statsRes.ok) {
-          const statsData = await statsRes.json();
+          const statsResult = await statsRes.json();
+          const statsData = statsResult.data || statsResult;
           setStats(statsData);
         }
 
         if (investmentsRes.ok) {
-          const investmentsData = await investmentsRes.json();
-          setInvestments(investmentsData);
+          const investmentsResult = await investmentsRes.json();
+          const investmentsData = investmentsResult.data || investmentsResult;
+          setInvestments(Array.isArray(investmentsData) ? investmentsData : []);
         }
       } catch (error) {
         console.error('Failed to fetch dashboard data:', error);
