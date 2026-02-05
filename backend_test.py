@@ -201,6 +201,56 @@ class EcoDePINAPITester:
             self.log_test(f"GET /api/plans?segment_id=", False, f"Error: {str(e)}")
             return False
 
+    def test_supported_wallets(self):
+        """Test GET /api/wallet/supported - should return 4 EVM wallets"""
+        try:
+            response = requests.get(f"{self.base_url}/api/wallet/supported", timeout=10)
+            success = response.status_code == 200
+            
+            if success:
+                data = response.json()
+                if data.get('success') and 'data' in data and 'wallets' in data['data']:
+                    wallets = data['data']['wallets']
+                    expected_wallets = ['metamask', 'trust_wallet', 'walletconnect', 'coinbase']
+                    actual_wallet_types = [w['type'] for w in wallets]
+                    
+                    if len(wallets) == 4 and all(wtype in actual_wallet_types for wtype in expected_wallets):
+                        self.log_test("GET /api/wallet/supported (4 EVM wallets)", True, f"Found all 4 EVM wallets: {actual_wallet_types}")
+                    else:
+                        self.log_test("GET /api/wallet/supported", False, f"Expected 4 EVM wallets {expected_wallets}, got {actual_wallet_types}")
+                        success = False
+                else:
+                    self.log_test("GET /api/wallet/supported", False, "Invalid response structure")
+                    success = False
+            else:
+                self.log_test("GET /api/wallet/supported", False, f"HTTP {response.status_code}: {response.text}", 200, response.status_code)
+            
+            return success
+        except Exception as e:
+            self.log_test("GET /api/wallet/supported", False, f"Error: {str(e)}")
+            return False
+
+    def test_plans_count(self):
+        """Test GET /api/plans - should return 15 investment plans"""
+        try:
+            response = requests.get(f"{self.base_url}/api/plans", timeout=10)
+            success = response.status_code == 200
+            
+            if success:
+                data = response.json()
+                if len(data) == 15:
+                    self.log_test("GET /api/plans (15 plans)", True, f"Found exactly 15 investment plans")
+                else:
+                    self.log_test("GET /api/plans (15 plans)", False, f"Expected 15 plans, got {len(data)}")
+                    success = False
+            else:
+                self.log_test("GET /api/plans (15 plans)", False, f"HTTP {response.status_code}: {response.text}", 200, response.status_code)
+            
+            return success
+        except Exception as e:
+            self.log_test("GET /api/plans (15 plans)", False, f"Error: {str(e)}")
+            return False
+
     def run_all_tests(self):
         """Run all backend API tests"""
         print("🚀 Starting EcoDePIN Backend API Tests")
