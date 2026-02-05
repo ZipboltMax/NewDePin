@@ -253,7 +253,7 @@ class EcoDePINAPITester:
 
     def run_all_tests(self):
         """Run all backend API tests"""
-        print("🚀 Starting EcoDePIN Backend API Tests")
+        print("🚀 Starting EcoDePIN Backend API Tests - EVM Wallet Migration")
         print(f"📍 Testing: {self.base_url}")
         print("=" * 60)
         
@@ -265,18 +265,24 @@ class EcoDePINAPITester:
         # Test 2: Get segments (should return 5)
         segments_success, segments_data = self.test_get_segments()
         
-        # Test 3: Get plans (should have APY and risk levels)
+        # Test 3: Get plans (should return 15 plans)
+        self.test_plans_count()
+        
+        # Test 4: Get plans (should have APY and risk levels)
         plans_success, plans_data = self.test_get_plans()
         
-        # Test 4: Calculator endpoint
+        # Test 5: Supported wallets (should return 4 EVM wallets)
+        self.test_supported_wallets()
+        
+        # Test 6: Calculator endpoint
         if plans_data:
             self.test_calculator(plans_data)
         
-        # Test 5: Individual segment details
+        # Test 7: Individual segment details
         if segments_data:
             self.test_segment_detail(segments_data)
         
-        # Test 6: Plans by segment
+        # Test 8: Plans by segment
         if segments_data:
             self.test_plans_by_segment(segments_data)
         
