@@ -344,11 +344,10 @@ SUPPORTED_WALLETS = [
 ]
 
 SUPPORTED_CHAINS = [
-    {"chainId": 1, "name": "Ethereum Mainnet"},
-    {"chainId": 137, "name": "Polygon"},
-    {"chainId": 56, "name": "BNB Smart Chain"},
-    {"chainId": 42161, "name": "Arbitrum One"},
+    {"chainId": 137, "name": "Polygon Mainnet"},
 ]
+
+POLYGON_CHAIN_ID = 137
 
 @api_router.get("/wallet/supported")
 async def get_supported_wallets():
