@@ -295,6 +295,121 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* Agentic AI Section */}
+      <section className="py-20 md:py-32 bg-gradient-to-b from-slate-950 to-slate-900 text-white relative overflow-hidden" id="agentic-ai">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)`,
+            backgroundSize: '40px 40px',
+          }} />
+        </div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Section Header */}
+          <div className="text-center mb-16">
+            <Badge className="mb-4 bg-purple-500/20 text-purple-300 border-purple-500/30 px-4 py-1">
+              <Brain className="h-4 w-4 mr-2" />
+              Powered by Agentic AI
+            </Badge>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 font-['Outfit']">
+              The <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Agentic AI</span> Advantage
+            </h2>
+            <p className="text-lg md:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
+              By integrating Agentic AI—autonomous systems that can reason, plan, and act independently—
+              we're moving beyond simple diagnostics into an era of <span className="text-white font-semibold">self-diagnosing energy infrastructure</span>.
+            </p>
+          </div>
+
+          {/* AI Use Cases Grid */}
+          <div className="grid lg:grid-cols-2 gap-6 mb-12">
+            {agenticAIUseCases.map((useCase, index) => (
+              <Card 
+                key={index}
+                className={`bg-slate-800/50 border-slate-700/50 hover:border-slate-600 transition-all duration-300 hover:-translate-y-1 backdrop-blur-sm overflow-hidden group ${
+                  index === 4 ? 'lg:col-span-2' : ''
+                }`}
+                data-testid={`agentic-ai-card-${index}`}
+              >
+                <CardContent className="p-0">
+                  <div className="flex flex-col md:flex-row">
+                    {/* Icon Column */}
+                    <div className={`p-6 md:p-8 flex items-center justify-center bg-gradient-to-br ${useCase.gradient} md:w-32 shrink-0`}>
+                      <useCase.icon className="h-10 w-10 text-white" />
+                    </div>
+                    
+                    {/* Content Column */}
+                    <div className="p-6 flex-grow">
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <h3 className="text-xl font-bold text-white font-['Outfit'] mb-1">
+                            {useCase.title}
+                          </h3>
+                          <p className="text-sm text-slate-400 font-medium">
+                            {useCase.subtitle}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="mb-4">
+                        <p className="text-sm font-medium text-purple-400 mb-2 flex items-center gap-2">
+                          <Cpu className="h-4 w-4" />
+                          Agentic Edge
+                        </p>
+                        <p className="text-slate-300 text-sm leading-relaxed">
+                          {useCase.description}
+                        </p>
+                      </div>
+                      
+                      {/* Result Badge */}
+                      <div className="flex items-center gap-3 pt-4 border-t border-slate-700/50">
+                        <div className="flex items-center gap-2">
+                          <Target className="h-4 w-4 text-emerald-400" />
+                          <span className="text-emerald-400 font-bold">{useCase.result}</span>
+                        </div>
+                        <span className="text-slate-400 text-sm">{useCase.resultDetail}</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Bottom Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8 border-t border-slate-700/50">
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Activity className="h-5 w-5 text-purple-400" />
+                <span className="text-3xl font-bold text-white">24/7</span>
+              </div>
+              <p className="text-sm text-slate-400">Autonomous Monitoring</p>
+            </div>
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Timer className="h-5 w-5 text-emerald-400" />
+                <span className="text-3xl font-bold text-white">&lt;1s</span>
+              </div>
+              <p className="text-sm text-slate-400">Response Time</p>
+            </div>
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Gauge className="h-5 w-5 text-blue-400" />
+                <span className="text-3xl font-bold text-white">99.9%</span>
+              </div>
+              <p className="text-sm text-slate-400">System Uptime</p>
+            </div>
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Route className="h-5 w-5 text-pink-400" />
+                <span className="text-3xl font-bold text-white">Zero</span>
+              </div>
+              <p className="text-sm text-slate-400">Human Latency</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Segments Section */}
       <section className="py-20 md:py-32 bg-muted/30" id="segments">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
