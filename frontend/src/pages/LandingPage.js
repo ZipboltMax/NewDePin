@@ -90,7 +90,7 @@ const LandingPage = () => {
     {
       icon: PiggyBank,
       title: 'Daily Payouts',
-      description: 'Receive your rewards daily, directly to your connected Solana wallet.',
+      description: 'Receive your rewards daily, directly to your connected Polygon wallet.',
       stat: '13K+',
       statLabel: 'Active Investors',
     },
