@@ -114,6 +114,55 @@ const LandingPage = () => {
     },
   ];
 
+  // Agentic AI Use Cases
+  const agenticAIUseCases = [
+    {
+      icon: Battery,
+      title: 'Energy Storage Systems (BESS)',
+      subtitle: 'The Self-Balancing Grid',
+      description: 'When a thermal anomaly is detected, the agent doesn\'t just alert a technician. It autonomously throttles the specific cell\'s load, redirects energy flow to healthier modules, and orders a replacement part via the supply chain.',
+      result: '40% increase in component life',
+      resultDetail: 'by eliminating human latency in critical safety decisions',
+      gradient: 'from-emerald-500 to-teal-500',
+    },
+    {
+      icon: Server,
+      title: 'Data Centers',
+      subtitle: 'Zero-Downtime Power Orchestration',
+      description: 'The AI agents act as "Virtual Facility Managers." They monitor electricity pricing and grid load to decide—without human input—when to switch the data center from grid power to BESS, ensuring the lowest carbon footprint and cost.',
+      result: '30% reduction in energy costs',
+      resultDetail: 'through autonomous demand-response participation',
+      gradient: 'from-blue-500 to-cyan-500',
+    },
+    {
+      icon: PlugZap,
+      title: 'EV Charging Infra',
+      subtitle: 'Autonomous Maintenance Engines',
+      description: 'If a charger fails a handshake with a vehicle, the agent initiates a remote self-reboot, updates its status on ZeFlash.App to "Maintenance," and reroutes incoming drivers to the nearest functional stall.',
+      result: '99% uptime for CPOs',
+      resultDetail: 'by resolving common software glitches before a driver even arrives',
+      gradient: 'from-yellow-500 to-orange-500',
+    },
+    {
+      icon: Car,
+      title: 'EV Fleets',
+      subtitle: 'Dynamic Mission Planning',
+      description: 'Agents analyze real-time factors like weather, terrain, and individual driver behavior to dynamically adjust a vehicle\'s route. If a battery\'s health drops mid-route, the agent automatically books a "flash-charge" slot at an upcoming station.',
+      result: '60% reduction in roadside breakdowns',
+      resultDetail: 'and optimized delivery windows',
+      gradient: 'from-purple-500 to-pink-500',
+    },
+    {
+      icon: Plane,
+      title: 'eVTOL & Drones',
+      subtitle: 'Mission-Critical Flight Agency',
+      description: 'During flight, the agent constantly runs "Safety-to-Fly" simulations. If it detects a voltage sag that compromises landing safety, it takes over power-splitting between battery sources and autonomously designates an emergency landing pad.',
+      result: 'Unparalleled safety benchmarks',
+      resultDetail: 'for Urban Air Mobility (UAM)',
+      gradient: 'from-indigo-500 to-violet-500',
+    },
+  ];
+
   const formatTVL = (value) => {
     if (value >= 1000000) {
       return `$${(value / 1000000).toFixed(1)}M`;
