@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
+import { Badge } from '../components/ui/badge';
 import { useAuth } from '../context/AuthContext';
 import {
   ArrowRight,
@@ -16,6 +17,16 @@ import {
   Sun,
   CheckCircle2,
   ChevronRight,
+  Brain,
+  Cpu,
+  Car,
+  Plane,
+  PlugZap,
+  Activity,
+  Timer,
+  Target,
+  Gauge,
+  Route,
 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
