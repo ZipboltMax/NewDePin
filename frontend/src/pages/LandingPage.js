@@ -100,7 +100,7 @@ const LandingPage = () => {
     {
       step: '01',
       title: 'Connect Your Wallet',
-      description: 'Link your Phantom or Solflare wallet to access the platform securely.',
+      description: 'Link your MetaMask or Trust Wallet to access the platform on Polygon network.',
     },
     {
       step: '02',
