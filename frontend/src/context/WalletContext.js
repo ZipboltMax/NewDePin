@@ -70,20 +70,22 @@ export const WalletProvider = ({ children }) => {
   const [switchingChain, setSwitchingChain] = useState(false);
 
   // Check for existing connection on mount
-  useEffect(() => {
-    checkConnection();
-    
-    // Listen for account changes
-    if (window.ethereum) {
-      window.ethereum.on('accountsChanged', handleAccountsChanged);
-      window.ethereum.on('chainChanged', handleChainChanged);
-      
-      return () => {
-        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
-        window.ethereum.removeListener('chainChanged', handleChainChanged);
-      };
-    }
-  }, []);
+useEffect(() => {
+  if (typeof window === 'undefined') return;
+
+  checkConnection();
+
+  if (window.ethereum) {
+    window.ethereum.on('accountsChanged', handleAccountsChanged);
+    window.ethereum.on('chainChanged', handleChainChanged);
+
+    return () => {
+      window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+      window.ethereum.removeListener('chainChanged', handleChainChanged);
+    };
+  }
+}, [checkConnection, handleAccountsChanged, handleChainChanged]);
+
 
   const handleAccountsChanged = (accounts) => {
     if (accounts.length === 0) {
