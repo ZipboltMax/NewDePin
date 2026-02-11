@@ -69,41 +69,75 @@ export const WalletProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [switchingChain, setSwitchingChain] = useState(false);
 
-  // Check for existing connection on mount
-  useEffect(() => {
-    checkConnection();
-    
-    // Listen for account changes
-    if (window.ethereum) {
-      window.ethereum.on('accountsChanged', handleAccountsChanged);
-      window.ethereum.on('chainChanged', handleChainChanged);
-      
-      return () => {
-        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
-        window.ethereum.removeListener('chainChanged', handleChainChanged);
-      };
+  // Switch to Polygon network - defined first since other functions depend on it
+  const switchToPolygon = useCallback(async () => {
+    if (!window.ethereum) return { success: false, error: 'No provider' };
+
+    setSwitchingChain(true);
+
+    try {
+      // Try to switch to Polygon
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: POLYGON_CONFIG.chainId }],
+      });
+
+      setChainId(POLYGON_CHAIN_ID);
+      setSwitchingChain(false);
+      return { success: true };
+
+    } catch (switchError) {
+      // Chain not added to wallet - add it
+      if (switchError.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [POLYGON_CONFIG],
+          });
+
+          setChainId(POLYGON_CHAIN_ID);
+          setSwitchingChain(false);
+          return { success: true };
+
+        } catch (addError) {
+          console.error('Failed to add Polygon network:', addError);
+          setSwitchingChain(false);
+          return { success: false, error: 'Failed to add Polygon network' };
+        }
+      }
+
+      console.error('Failed to switch to Polygon:', switchError);
+      setSwitchingChain(false);
+      return { success: false, error: switchError.message };
     }
   }, []);
 
-  const handleAccountsChanged = (accounts) => {
+  // Disconnect function - defined early since handlers use it
+  const disconnect = useCallback(async () => {
+    setConnected(false);
+    setAddress(null);
+    setWalletType(null);
+    setChainId(null);
+    setError(null);
+  }, []);
+
+  // Handler for account changes
+  const handleAccountsChanged = useCallback((accounts) => {
     if (accounts.length === 0) {
       disconnect();
     } else {
       setAddress(accounts[0]);
     }
-  };
+  }, [disconnect]);
 
-  const handleChainChanged = (newChainId) => {
+  // Handler for chain changes
+  const handleChainChanged = useCallback((newChainId) => {
     const parsedChainId = parseInt(newChainId, 16);
     setChainId(parsedChainId);
-    
-    // If user switches away from Polygon, prompt to switch back
-    if (parsedChainId !== POLYGON_CHAIN_ID && connected) {
-      switchToPolygon();
-    }
-  };
+  }, []);
 
-  const checkConnection = async () => {
+  // Check for existing connection
+  const checkConnection = useCallback(async () => {
     if (window.ethereum) {
       try {
         const accounts = await window.ethereum.request({ method: 'eth_accounts' });
@@ -111,11 +145,11 @@ export const WalletProvider = ({ children }) => {
           setAddress(accounts[0]);
           setConnected(true);
           setWalletType(WALLET_TYPES.METAMASK);
-          
+
           const chainIdHex = await window.ethereum.request({ method: 'eth_chainId' });
           const currentChainId = parseInt(chainIdHex, 16);
           setChainId(currentChainId);
-          
+
           // Auto-switch to Polygon if not already on it
           if (currentChainId !== POLYGON_CHAIN_ID) {
             await switchToPolygon();
@@ -125,54 +159,27 @@ export const WalletProvider = ({ children }) => {
         console.error('Check connection error:', err);
       }
     }
-  };
+  }, [switchToPolygon]);
 
-  // Switch to Polygon network
-  const switchToPolygon = useCallback(async () => {
-    if (!window.ethereum) return { success: false, error: 'No provider' };
-    
-    setSwitchingChain(true);
-    
-    try {
-      // Try to switch to Polygon
-      await window.ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: POLYGON_CONFIG.chainId }],
-      });
-      
-      setChainId(POLYGON_CHAIN_ID);
-      setSwitchingChain(false);
-      return { success: true };
-      
-    } catch (switchError) {
-      // Chain not added to wallet - add it
-      if (switchError.code === 4902) {
-        try {
-          await window.ethereum.request({
-            method: 'wallet_addEthereumChain',
-            params: [POLYGON_CONFIG],
-          });
-          
-          setChainId(POLYGON_CHAIN_ID);
-          setSwitchingChain(false);
-          return { success: true };
-          
-        } catch (addError) {
-          console.error('Failed to add Polygon network:', addError);
-          setSwitchingChain(false);
-          return { success: false, error: 'Failed to add Polygon network' };
-        }
-      }
-      
-      console.error('Failed to switch to Polygon:', switchError);
-      setSwitchingChain(false);
-      return { success: false, error: switchError.message };
+  // Check for existing connection on mount
+  useEffect(() => {
+    checkConnection();
+
+    // Listen for account changes
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', handleAccountsChanged);
+      window.ethereum.on('chainChanged', handleChainChanged);
+
+      return () => {
+        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+        window.ethereum.removeListener('chainChanged', handleChainChanged);
+      };
     }
-  }, []);
+  }, [checkConnection, handleAccountsChanged, handleChainChanged]);
 
   const getProvider = useCallback((type) => {
     if (typeof window === 'undefined') return null;
-    
+
     switch (type) {
       case WALLET_TYPES.METAMASK:
         return window.ethereum?.isMetaMask ? window.ethereum : null;
@@ -188,10 +195,10 @@ export const WalletProvider = ({ children }) => {
   const connect = useCallback(async (type = WALLET_TYPES.METAMASK) => {
     setConnecting(true);
     setError(null);
-    
+
     try {
       const provider = getProvider(type);
-      
+
       if (!provider) {
         const wallet = WALLETS.find(w => w.type === type);
         window.open(wallet?.downloadUrl || 'https://metamask.io/download/', '_blank');
@@ -201,38 +208,38 @@ export const WalletProvider = ({ children }) => {
 
       // Request account access
       const accounts = await provider.request({ method: 'eth_requestAccounts' });
-      
+
       if (accounts.length === 0) {
         throw new Error('No accounts found');
       }
-      
+
       // Get current chain ID
       const chainIdHex = await provider.request({ method: 'eth_chainId' });
       const currentChainId = parseInt(chainIdHex, 16);
-      
+
       setAddress(accounts[0]);
       setWalletType(type);
       setChainId(currentChainId);
       setConnected(true);
-      
+
       // Auto-switch to Polygon if not already on it
       if (currentChainId !== POLYGON_CHAIN_ID) {
         const switchResult = await switchToPolygon();
         if (!switchResult.success) {
           // Still connected but on wrong network
           setConnecting(false);
-          return { 
-            success: true, 
-            address: accounts[0], 
+          return {
+            success: true,
+            address: accounts[0],
             chainId: currentChainId,
             warning: 'Please switch to Polygon network'
           };
         }
       }
-      
+
       setConnecting(false);
       return { success: true, address: accounts[0], chainId: POLYGON_CHAIN_ID };
-      
+
     } catch (err) {
       console.error('Wallet connection error:', err);
       setError(err.message);
@@ -240,14 +247,6 @@ export const WalletProvider = ({ children }) => {
       return { success: false, error: err.message };
     }
   }, [getProvider, switchToPolygon]);
-
-  const disconnect = useCallback(async () => {
-    setConnected(false);
-    setAddress(null);
-    setWalletType(null);
-    setChainId(null);
-    setError(null);
-  }, []);
 
   const isOnPolygon = useMemo(() => chainId === POLYGON_CHAIN_ID, [chainId]);
 
