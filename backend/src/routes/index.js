@@ -16,7 +16,7 @@ const portfolioRoutes = require('./portfolio.routes');
 // Health check
 router.get('/', (req, res) => {
   res.json({
-    message: 'EcoDePIN API',
+    message: 'Investyz API',
     version: '1.0.0',
     status: 'healthy',
   });
@@ -40,3 +40,4 @@ router.post('/auth/connect-wallet', require('../middlewares/auth.middleware').re
 );
 
 module.exports = router;
+

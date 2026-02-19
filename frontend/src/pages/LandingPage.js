@@ -176,7 +176,7 @@ const LandingPage = () => {
       <section className="relative min-h-screen flex items-center hero-gradient grain overflow-hidden">
         {/* Background Image */}
         <div
-          className="absolute inset-0 opacity-10 dark:opacity-5"
+          className="absolute inset-0 opacity-10 dark:opacity-20"
           style={{
             backgroundImage: 'url(https://images.unsplash.com/photo-1654419189892-d8814766c4fd?crop=entropy&cs=srgb&fm=jpg&q=85)',
             backgroundSize: 'cover',
@@ -192,18 +192,18 @@ const LandingPage = () => {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-500 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
               </span>
-              <span className="text-sm font-medium text-purple-600 dark:text-purple-400">Live on Polygon Network</span>
+              <span className="text-sm font-medium text-purple-700 dark:text-purple-300">Live on Polygon Network</span>
             </div>
 
             {/* Headline */}
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.1] mb-6 font-['Outfit']">
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.1] mb-6 font-['Outfit'] text-white">
               Invest in the{' '}
               <span className="text-gradient">Infrastructure</span>{' '}
               of Tomorrow
             </h1>
 
             {/* Subheadline */}
-            <p className="text-lg md:text-xl leading-relaxed text-muted-foreground mb-10 max-w-2xl">
+            <p className="text-lg md:text-xl leading-relaxed text-slate-700 dark:text-slate-200 mb-10 max-w-2xl">
               Earn sustainable yields by investing in real-world assets like data centers, 
               battery storage, EV charging, and renewable energy through decentralized 
               physical infrastructure on Polygon.
@@ -235,15 +235,15 @@ const LandingPage = () => {
             <div className="mt-12 flex flex-wrap items-center gap-8">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-5 w-5 text-primary" />
-                <span className="text-sm text-muted-foreground">Audited Smart Contracts</span>
+                <span className="text-sm text-slate-700 dark:text-slate-200">Audited Smart Contracts</span>
               </div>
               <div className="flex items-center gap-2">
                 <Shield className="h-5 w-5 text-primary" />
-                <span className="text-sm text-muted-foreground">Non-Custodial</span>
+                <span className="text-sm text-slate-700 dark:text-slate-200">Non-Custodial</span>
               </div>
               <div className="flex items-center gap-2">
                 <Wallet className="h-5 w-5 text-primary" />
-                <span className="text-sm text-muted-foreground">Multi-Wallet Support</span>
+                <span className="text-sm text-slate-700 dark:text-slate-200">Multi-Wallet Support</span>
               </div>
             </div>
           </div>
@@ -261,8 +261,8 @@ const LandingPage = () => {
       <section className="py-20 md:py-32 bg-background" id="features">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-semibold tracking-tight mb-4 font-['Outfit']">
-              Why Choose <span className="text-gradient">EcoDePIN</span>?
+            <h2 className="text-4xl md:text-5xl font-semibold tracking-tight mb-4 font-['Outfit'] text-white">
+              Why Choose <span className="text-gradient">Investyz</span>?
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Combining the power of DeFi with real-world sustainable infrastructure
@@ -315,7 +315,7 @@ const LandingPage = () => {
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 font-['Outfit']">
               The <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Agentic AI</span> Advantage
             </h2>
-            <p className="text-lg md:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl text-slate-200 max-w-3xl mx-auto leading-relaxed">
               By integrating Agentic AI—autonomous systems that can reason, plan, and act independently—
               we're moving beyond simple diagnostics into an era of <span className="text-white font-semibold">self-diagnosing energy infrastructure</span>.
             </p>
@@ -345,18 +345,18 @@ const LandingPage = () => {
                           <h3 className="text-xl font-bold text-white font-['Outfit'] mb-1">
                             {useCase.title}
                           </h3>
-                          <p className="text-sm text-slate-400 font-medium">
+                          <p className="text-sm text-slate-300 font-medium">
                             {useCase.subtitle}
                           </p>
                         </div>
                       </div>
                       
                       <div className="mb-4">
-                        <p className="text-sm font-medium text-purple-400 mb-2 flex items-center gap-2">
+                        <p className="text-sm font-medium text-purple-300 mb-2 flex items-center gap-2">
                           <Cpu className="h-4 w-4" />
                           Agentic Edge
                         </p>
-                        <p className="text-slate-300 text-sm leading-relaxed">
+                        <p className="text-slate-200 text-sm leading-relaxed">
                           {useCase.description}
                         </p>
                       </div>
@@ -367,7 +367,7 @@ const LandingPage = () => {
                           <Target className="h-4 w-4 text-emerald-400" />
                           <span className="text-emerald-400 font-bold">{useCase.result}</span>
                         </div>
-                        <span className="text-slate-400 text-sm">{useCase.resultDetail}</span>
+                        <span className="text-slate-300 text-sm">{useCase.resultDetail}</span>
                       </div>
                     </div>
                   </div>
@@ -383,28 +383,28 @@ const LandingPage = () => {
                 <Activity className="h-5 w-5 text-purple-400" />
                 <span className="text-3xl font-bold text-white">24/7</span>
               </div>
-              <p className="text-sm text-slate-400">Autonomous Monitoring</p>
+              <p className="text-sm text-slate-300">Autonomous Monitoring</p>
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Timer className="h-5 w-5 text-emerald-400" />
                 <span className="text-3xl font-bold text-white">&lt;1s</span>
               </div>
-              <p className="text-sm text-slate-400">Response Time</p>
+              <p className="text-sm text-slate-300">Response Time</p>
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Gauge className="h-5 w-5 text-blue-400" />
                 <span className="text-3xl font-bold text-white">99.9%</span>
               </div>
-              <p className="text-sm text-slate-400">System Uptime</p>
+              <p className="text-sm text-slate-300">System Uptime</p>
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Route className="h-5 w-5 text-pink-400" />
                 <span className="text-3xl font-bold text-white">Zero</span>
               </div>
-              <p className="text-sm text-slate-400">Human Latency</p>
+              <p className="text-sm text-slate-300">Human Latency</p>
             </div>
           </div>
         </div>
@@ -418,7 +418,7 @@ const LandingPage = () => {
               <h2 className="text-4xl md:text-5xl font-semibold tracking-tight mb-4 font-['Outfit']">
                 Investment <span className="text-gradient">Segments</span>
               </h2>
-              <p className="text-lg text-muted-foreground max-w-xl">
+              <p className="text-lg text-black max-w-xl">
                 Diversify across multiple sustainable infrastructure categories
               </p>
             </div>
@@ -484,7 +484,7 @@ const LandingPage = () => {
       <section className="py-20 md:py-32 bg-background" id="how-it-works">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-semibold tracking-tight mb-4 font-['Outfit']">
+            <h2 className="text-4xl md:text-5xl font-semibold tracking-tight mb-4 font-['Outfit'] text-white">
               How It <span className="text-gradient">Works</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -563,3 +563,4 @@ const LandingPage = () => {
 };
 
 export default LandingPage;
+

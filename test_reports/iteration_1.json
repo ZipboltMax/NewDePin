@@ -1,5 +1,5 @@
 {
-  "summary": "Completed comprehensive testing of EcoDePIN Web3 investment platform. Backend APIs fully functional, frontend UI working well with minor overlay issue on segment detail page.",
+  "summary": "Completed comprehensive testing of Investyz Web3 investment platform. Backend APIs fully functional, frontend UI working well with minor overlay issue on segment detail page.",
   
   "backend_issues": {
     "critical_bugs": [],

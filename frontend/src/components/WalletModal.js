@@ -103,7 +103,7 @@ const WalletModal = ({ open, onOpenChange }) => {
                     <span className="font-medium text-yellow-500">Wrong Network</span>
                   </div>
                   <p className="text-sm text-muted-foreground mb-3">
-                    Please switch to Polygon network to use EcoDePIN
+                    Please switch to Polygon network to use Investyz
                   </p>
                   <Button 
                     onClick={handleSwitchToPolygon}
@@ -212,3 +212,4 @@ const WalletModal = ({ open, onOpenChange }) => {
 };
 
 export default WalletModal;
+
