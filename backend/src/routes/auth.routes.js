@@ -8,7 +8,8 @@ const { requireAuth } = require('../middlewares/auth.middleware');
 const { asyncHandler } = require('../middlewares/error.middleware');
 
 // Public routes
-router.post('/session', asyncHandler(authController.createSession));
+router.post('/register', asyncHandler(authController.register));
+router.post('/login', asyncHandler(authController.login));
 
 // Protected routes
 router.get('/me', requireAuth, asyncHandler(authController.getCurrentUser));

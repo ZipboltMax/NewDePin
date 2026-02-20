@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Toaster } from './components/ui/sonner';
-import { AuthProvider, AuthCallback, useAuth } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { WalletProvider } from './context/WalletContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -10,13 +10,14 @@ import SegmentsPage from './pages/SegmentsPage';
 import SegmentDetailPage from './pages/SegmentDetailPage';
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import { PaymentSuccess, PaymentCancel } from './pages/PaymentPages';
 import '@/App.css';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
-  const location = useLocation();
 
   if (loading) {
     return (
@@ -26,33 +27,55 @@ const ProtectedRoute = ({ children }) => {
     );
   }
 
-  // If user data passed from AuthCallback via location state, use it
-  if (location.state?.user) {
-    return children;
-  }
-
   if (!user) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return children;
 };
 
-// App Router with Auth Detection
-const AppRouter = () => {
-  const location = useLocation();
+// Guest Route - redirect to dashboard if already logged in
+const GuestRoute = ({ children }) => {
+  const { user, loading } = useAuth();
 
-  // Check URL fragment for session_id - do this synchronously during render
-  if (location.hash?.includes('session_id=')) {
-    return <AuthCallback />;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center hero-gradient">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
   }
 
+  if (user) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+};
+
+// App Router
+const AppRouter = () => {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/segments" element={<SegmentsPage />} />
       <Route path="/segments/:segmentId" element={<SegmentDetailPage />} />
-      <Route path="/auth/callback" element={<AuthCallback />} />
+      <Route
+        path="/login"
+        element={
+          <GuestRoute>
+            <LoginPage />
+          </GuestRoute>
+        }
+      />
+      <Route
+        path="/register"
+        element={
+          <GuestRoute>
+            <RegisterPage />
+          </GuestRoute>
+        }
+      />
       <Route
         path="/dashboard"
         element={
@@ -94,12 +117,13 @@ const AppRouter = () => {
 const Layout = ({ children }) => {
   const location = useLocation();
   const isDashboard = location.pathname.startsWith('/dashboard') || location.pathname.startsWith('/profile');
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
 
   return (
     <div className={isDashboard ? 'dark' : ''}>
-      <Navbar />
+      {!isAuthPage && <Navbar />}
       <main>{children}</main>
-      {!isDashboard && <Footer />}
+      {!isDashboard && !isAuthPage && <Footer />}
     </div>
   );
 };

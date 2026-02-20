@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -13,25 +13,45 @@ export const useAuth = () => {
   return context;
 };
 
+/**
+ * Helper to make authenticated API calls
+ */
+const authFetch = (url, options = {}) => {
+  const token = localStorage.getItem('token');
+  return fetch(url, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...options.headers,
+    },
+  });
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const location = useLocation();
 
   const checkAuth = useCallback(async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
     try {
-      const response = await fetch(`${API_URL}/api/auth/me`, {
-        credentials: 'include',
-      });
+      const response = await authFetch(`${API_URL}/api/auth/me`);
       if (response.ok) {
-        const userData = await response.json();
-        setUser(userData);
+        const data = await response.json();
+        setUser(data.data);
       } else {
+        localStorage.removeItem('token');
         setUser(null);
       }
     } catch (error) {
       console.error('Auth check failed:', error);
+      localStorage.removeItem('token');
       setUser(null);
     } finally {
       setLoading(false);
@@ -42,32 +62,64 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, [checkAuth]);
 
-  const login = () => {
-    // REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
-    const redirectUrl = window.location.origin + '/auth/callback';
-    window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
+  const login = async (email, password) => {
+    try {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+      if (response.ok && data.data) {
+        localStorage.setItem('token', data.data.token);
+        setUser(data.data.user);
+        navigate('/dashboard');
+        return { success: true };
+      }
+      return { success: false, message: data.message || 'Login failed' };
+    } catch (error) {
+      console.error('Login error:', error);
+      return { success: false, message: 'Network error. Please try again.' };
+    }
+  };
+
+  const register = async (name, email, password) => {
+    try {
+      const response = await fetch(`${API_URL}/api/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password }),
+      });
+      const data = await response.json();
+      if (response.ok && data.data) {
+        localStorage.setItem('token', data.data.token);
+        setUser(data.data.user);
+        navigate('/dashboard');
+        return { success: true };
+      }
+      return { success: false, message: data.message || 'Registration failed' };
+    } catch (error) {
+      console.error('Register error:', error);
+      return { success: false, message: 'Network error. Please try again.' };
+    }
   };
 
   const logout = async () => {
     try {
-      await fetch(`${API_URL}/api/auth/logout`, {
-        method: 'POST',
-        credentials: 'include',
-      });
+      await authFetch(`${API_URL}/api/auth/logout`, { method: 'POST' });
     } catch (error) {
       console.error('Logout error:', error);
     }
+    localStorage.removeItem('token');
     setUser(null);
     navigate('/');
   };
 
   const connectWallet = async (walletAddress, walletType = 'metamask', chainId = 1) => {
     try {
-      const response = await fetch(`${API_URL}/api/wallet/connect`, {
+      const response = await authFetch(`${API_URL}/api/wallet/connect`, {
         method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           wallet_address: walletAddress,
           wallet_type: walletType,
           chain_id: chainId,
@@ -88,65 +140,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, loading, login, logout, checkAuth, connectWallet }}>
+    <AuthContext.Provider value={{ user, setUser, loading, login, logout, register, checkAuth, connectWallet }}>
       {children}
     </AuthContext.Provider>
-  );
-};
-
-// Auth callback component
-export const AuthCallback = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { setUser } = useAuth();
-  const hasProcessed = useRef(false);
-
-  useEffect(() => {
-    if (hasProcessed.current) return;
-    hasProcessed.current = true;
-
-    const processAuth = async () => {
-      const hash = location.hash;
-      const params = new URLSearchParams(hash.replace('#', ''));
-      const sessionId = params.get('session_id');
-
-      if (!sessionId) {
-        navigate('/');
-        return;
-      }
-
-      try {
-        const response = await fetch(`${API_URL}/api/auth/session`, {
-          method: 'POST',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ session_id: sessionId }),
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setUser(data.user);
-          navigate('/dashboard', { state: { user: data.user } });
-        } else {
-          console.error('Auth failed');
-          navigate('/');
-        }
-      } catch (error) {
-        console.error('Auth error:', error);
-        navigate('/');
-      }
-    };
-
-    processAuth();
-  }, [location, navigate, setUser]);
-
-  return (
-    <div className="min-h-screen flex items-center justify-center hero-gradient">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-        <p className="text-muted-foreground">Authenticating...</p>
-      </div>
-    </div>
   );
 };
 

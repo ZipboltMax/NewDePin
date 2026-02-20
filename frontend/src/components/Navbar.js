@@ -16,7 +16,7 @@ import WalletModal from './WalletModal';
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [walletModalOpen, setWalletModalOpen] = useState(false);
-  const { user, login, logout } = useAuth();
+  const { user, logout } = useAuth();
   const { connected, publicKey, disconnect } = useWallet();
   const navigate = useNavigate();
   const location = useLocation();
@@ -55,9 +55,8 @@ const Navbar = () => {
                 <Link
                   key={link.name}
                   to={link.href}
-                  className={`text-sm font-medium transition-colors hover:text-primary ${
-                    isActive(link.href) ? 'text-primary' : 'text-muted-foreground'
-                  }`}
+                  className={`text-sm font-medium transition-colors hover:text-primary ${isActive(link.href) ? 'text-primary' : 'text-muted-foreground'
+                    }`}
                   data-testid={`nav-${link.name.toLowerCase().replace(' ', '-')}`}
                 >
                   {link.name}
@@ -122,7 +121,7 @@ const Navbar = () => {
                 </DropdownMenu>
               ) : (
                 <Button
-                  onClick={login}
+                  onClick={() => navigate('/login')}
                   className="rounded-full px-6"
                   data-testid="login-btn"
                 >
@@ -196,7 +195,7 @@ const Navbar = () => {
                   <Button
                     className="w-full rounded-full"
                     onClick={() => {
-                      login();
+                      navigate('/login');
                       setMobileMenuOpen(false);
                     }}
                   >

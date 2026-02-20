@@ -18,7 +18,7 @@ const API_URL = process.env.REACT_APP_BACKEND_URL;
 const SegmentDetailPage = () => {
   const { segmentId } = useParams();
   const navigate = useNavigate();
-  const { user, login } = useAuth();
+  const { user } = useAuth();
 
   const [segment, setSegment] = useState(null);
   const [plans, setPlans] = useState([]);
@@ -91,7 +91,7 @@ const SegmentDetailPage = () => {
 
   const handleInvest = async () => {
     if (!user) {
-      login();
+      navigate('/login');
       return;
     }
 
@@ -277,11 +277,10 @@ const SegmentDetailPage = () => {
                   {plans.map((plan) => (
                     <Card
                       key={plan.plan_id}
-                      className={`cursor-pointer transition-all ${
-                        selectedPlan?.plan_id === plan.plan_id
+                      className={`cursor-pointer transition-all ${selectedPlan?.plan_id === plan.plan_id
                           ? 'border-primary shadow-glow'
                           : 'hover:border-primary/30'
-                      }`}
+                        }`}
                       onClick={() => {
                         setSelectedPlan(plan);
                         setInvestmentAmount(plan.min_investment);
@@ -329,7 +328,7 @@ const SegmentDetailPage = () => {
                   <CardContent className="p-6">
                     <h3 className="text-xl font-semibold mb-4 font-['Outfit']">Environmental Impact</h3>
                     <p className="text-muted-foreground mb-6">
-                      Your investment in {segment.name} contributes directly to reducing carbon 
+                      Your investment in {segment.name} contributes directly to reducing carbon
                       emissions and supporting the transition to sustainable energy infrastructure.
                     </p>
 

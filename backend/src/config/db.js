@@ -8,8 +8,12 @@ const logger = require('../utils/logger');
 
 const connectDB = async () => {
   try {
-    const mongoURI = `${env.MONGO_URL}/${env.DB_NAME}`;
-    
+    // If MONGO_URL already contains the DB name (Atlas-style), use it directly
+    // Otherwise append DB_NAME
+    const mongoURI = env.MONGO_URL.includes('mongodb+srv') || env.MONGO_URL.includes('mongodb.net')
+      ? env.MONGO_URL
+      : `${env.MONGO_URL}/${env.DB_NAME}`;
+
     const options = {
       maxPoolSize: 10,
       serverSelectionTimeoutMS: 5000,
@@ -17,14 +21,14 @@ const connectDB = async () => {
     };
 
     await mongoose.connect(mongoURI, options);
-    
-    logger.info(`MongoDB connected: ${env.DB_NAME}`);
-    
+
+    logger.info(`MongoDB connected successfully`);
+
     // Connection event handlers
     mongoose.connection.on('error', (err) => {
       logger.error('MongoDB connection error:', err);
     });
-    
+
     mongoose.connection.on('disconnected', () => {
       logger.warn('MongoDB disconnected');
     });

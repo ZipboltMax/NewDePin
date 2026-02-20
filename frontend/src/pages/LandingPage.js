@@ -32,7 +32,7 @@ import {
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
 const LandingPage = () => {
-  const { user, login } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [segments, setSegments] = useState([]);
 
@@ -183,7 +183,7 @@ const LandingPage = () => {
             backgroundPosition: 'center',
           }}
         />
-        
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 md:py-40">
           <div className="max-w-3xl">
             {/* Badge */}
@@ -204,8 +204,8 @@ const LandingPage = () => {
 
             {/* Subheadline */}
             <p className="text-lg md:text-xl leading-relaxed text-muted-foreground mb-10 max-w-2xl">
-              Earn sustainable yields by investing in real-world assets like data centers, 
-              battery storage, EV charging, and renewable energy through decentralized 
+              Earn sustainable yields by investing in real-world assets like data centers,
+              battery storage, EV charging, and renewable energy through decentralized
               physical infrastructure on Polygon.
             </p>
 
@@ -214,7 +214,7 @@ const LandingPage = () => {
               <Button
                 size="lg"
                 className="rounded-full px-8 py-6 text-lg font-medium shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
-                onClick={() => user ? navigate('/dashboard') : login()}
+                onClick={() => user ? navigate('/dashboard') : navigate('/login')}
                 data-testid="hero-cta-primary"
               >
                 Start Investing
@@ -273,9 +273,8 @@ const LandingPage = () => {
             {features.map((feature, index) => (
               <Card
                 key={index}
-                className={`p-8 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-all hover:-translate-y-1 group ${
-                  index === 0 ? 'col-span-2 row-span-2' : ''
-                }`}
+                className={`p-8 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-all hover:-translate-y-1 group ${index === 0 ? 'col-span-2 row-span-2' : ''
+                  }`}
                 data-testid={`feature-card-${index}`}
               >
                 <CardContent className="p-0 h-full flex flex-col">
@@ -304,7 +303,7 @@ const LandingPage = () => {
             backgroundSize: '40px 40px',
           }} />
         </div>
-        
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Section Header */}
           <div className="text-center mb-16">
@@ -324,11 +323,10 @@ const LandingPage = () => {
           {/* AI Use Cases Grid */}
           <div className="grid lg:grid-cols-2 gap-6 mb-12">
             {agenticAIUseCases.map((useCase, index) => (
-              <Card 
+              <Card
                 key={index}
-                className={`bg-slate-800/50 border-slate-700/50 hover:border-slate-600 transition-all duration-300 hover:-translate-y-1 backdrop-blur-sm overflow-hidden group ${
-                  index === 4 ? 'lg:col-span-2' : ''
-                }`}
+                className={`bg-slate-800/50 border-slate-700/50 hover:border-slate-600 transition-all duration-300 hover:-translate-y-1 backdrop-blur-sm overflow-hidden group ${index === 4 ? 'lg:col-span-2' : ''
+                  }`}
                 data-testid={`agentic-ai-card-${index}`}
               >
                 <CardContent className="p-0">
@@ -337,7 +335,7 @@ const LandingPage = () => {
                     <div className={`p-6 md:p-8 flex items-center justify-center bg-gradient-to-br ${useCase.gradient} md:w-32 shrink-0`}>
                       <useCase.icon className="h-10 w-10 text-white" />
                     </div>
-                    
+
                     {/* Content Column */}
                     <div className="p-6 flex-grow">
                       <div className="flex items-start justify-between mb-3">
@@ -350,7 +348,7 @@ const LandingPage = () => {
                           </p>
                         </div>
                       </div>
-                      
+
                       <div className="mb-4">
                         <p className="text-sm font-medium text-purple-400 mb-2 flex items-center gap-2">
                           <Cpu className="h-4 w-4" />
@@ -360,7 +358,7 @@ const LandingPage = () => {
                           {useCase.description}
                         </p>
                       </div>
-                      
+
                       {/* Result Badge */}
                       <div className="flex items-center gap-3 pt-4 border-t border-slate-700/50">
                         <div className="flex items-center gap-2">
@@ -515,7 +513,7 @@ const LandingPage = () => {
             <Button
               size="lg"
               className="rounded-full px-8 py-6 text-lg font-medium shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
-              onClick={() => user ? navigate('/dashboard') : login()}
+              onClick={() => user ? navigate('/dashboard') : navigate('/login')}
               data-testid="how-it-works-cta"
             >
               Get Started Now
@@ -540,7 +538,7 @@ const LandingPage = () => {
             <Button
               size="lg"
               className="rounded-full px-8 py-6 text-lg font-medium shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
-              onClick={() => user ? navigate('/dashboard') : login()}
+              onClick={() => user ? navigate('/dashboard') : navigate('/login')}
               data-testid="cta-primary"
             >
               Start Investing
