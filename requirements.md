@@ -1,4 +1,4 @@
-# EcoDePIN - Web3 DePIN Investment Platform
+# Investyz - Web3 DePIN Investment Platform
 
 ## Original Problem Statement
 Create a React wrapper dApp with Web3 Blockchain-based DePIN for RWAs such as:
@@ -86,3 +86,4 @@ Create a React wrapper dApp with Web3 Blockchain-based DePIN for RWAs such as:
 - **Auth**: Emergent OAuth (Google)
 - **Payments**: Stripe via emergentintegrations
 - **Blockchain**: Solana (Phantom, Solflare wallets)
+

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, Leaf, Wallet, LogOut, User, ChevronDown } from 'lucide-react';
+import { Menu, X, Wallet, LogOut, User, ChevronDown } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import {
   DropdownMenu,
@@ -12,6 +12,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useWallet } from '../context/WalletContext';
 import WalletModal from './WalletModal';
+import BrandLogo from './BrandLogo';
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -40,14 +41,7 @@ const Navbar = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-2 group" data-testid="nav-logo">
-              <div className="p-2 rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                <Leaf className="h-6 w-6 text-primary" />
-              </div>
-              <span className="text-xl font-bold font-['Outfit']">
-                Eco<span className="text-gradient">DePIN</span>
-              </span>
-            </Link>
+            <BrandLogo frameClassName="h-9 w-[150px]" />
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-8">
@@ -55,8 +49,8 @@ const Navbar = () => {
                 <Link
                   key={link.name}
                   to={link.href}
-                  className={`text-sm font-medium transition-colors hover:text-primary ${
-                    isActive(link.href) ? 'text-primary' : 'text-muted-foreground'
+                  className={`text-sm font-medium transition-colors hover:text-foreground ${
+                    isActive(link.href) ? 'text-primary' : 'text-slate-300'
                   }`}
                   data-testid={`nav-${link.name.toLowerCase().replace(' ', '-')}`}
                 >
@@ -73,7 +67,7 @@ const Navbar = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => setWalletModalOpen(true)}
-                  className="rounded-full gap-2"
+                  className="rounded-full gap-2 text-slate-100 border-slate-700 hover:bg-slate-800"
                   data-testid="wallet-connected-btn"
                 >
                   <Wallet className="h-4 w-4" />
@@ -84,7 +78,7 @@ const Navbar = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => setWalletModalOpen(true)}
-                  className="rounded-full gap-2"
+                  className="rounded-full gap-2 text-slate-100 border-slate-700 hover:bg-slate-800"
                   data-testid="connect-wallet-btn"
                 >
                   <Wallet className="h-4 w-4" />

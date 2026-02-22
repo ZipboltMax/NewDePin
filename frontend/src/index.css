@@ -47,11 +47,11 @@
     --accent: 82 85% 62%;
     --accent-foreground: 222 47% 6%;
     --muted: 217 33% 10%;
-    --muted-foreground: 215 20% 65%;
+    --muted-foreground: 215 20% 82%;
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
+    --border: 217 30% 26%;
+    --input: 217 30% 26%;
     --ring: 158 64% 52%;
     --chart-1: 158 64% 52%;
     --chart-2: 82 85% 62%;
@@ -90,7 +90,7 @@
   }
   
   .hero-gradient {
-    @apply bg-gradient-to-br from-emerald-50 via-white to-lime-50 dark:from-slate-950 dark:via-slate-900 dark:to-emerald-950;
+    @apply bg-gradient-to-br from-emerald-50 via-white to-lime-50 dark:from-slate-950 dark:via-slate-900 dark:to-[#07241f];
   }
   
   .glass-light {
@@ -98,7 +98,7 @@
   }
   
   .glass-dark {
-    @apply bg-slate-950/60 backdrop-blur-xl border border-white/10 shadow-lg;
+    @apply bg-slate-950/75 backdrop-blur-xl border border-white/10 shadow-lg;
   }
   
   .shadow-glow {

@@ -5,7 +5,7 @@ import sys
 import json
 from datetime import datetime
 
-class EcoDePINAPITester:
+class InvestyzAPITester:
     def __init__(self, base_url="https://eco-asset-portal.preview.emergentagent.com"):
         self.base_url = base_url
         self.session_token = None
@@ -253,7 +253,7 @@ class EcoDePINAPITester:
 
     def run_all_tests(self):
         """Run all backend API tests"""
-        print("🚀 Starting EcoDePIN Backend API Tests - EVM Wallet Migration")
+        print("🚀 Starting Investyz Backend API Tests - EVM Wallet Migration")
         print(f"📍 Testing: {self.base_url}")
         print("=" * 60)
         
@@ -305,7 +305,7 @@ class EcoDePINAPITester:
             return False
 
 def main():
-    tester = EcoDePINAPITester()
+    tester = InvestyzAPITester()
     success = tester.run_all_tests()
     return 0 if success else 1
 

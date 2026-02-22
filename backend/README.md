@@ -1,4 +1,4 @@
-# EcoDePIN Backend
+# Investyz Backend
 
 ## Node.js Backend Structure (Reference Implementation)
 
@@ -139,3 +139,4 @@ The current running backend uses Python FastAPI (`server.py`) due to Emergent pl
 - Polygon (137)
 - BNB Smart Chain (56)
 - Arbitrum One (42161)
+
